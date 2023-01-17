@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jan 15 16:38:46 2023
+
+@author: vishnuv
+"""
+
+#importing the libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+#importing our cancer dataset
+dataset = pd.read_csv("cancer.csv")
+print(dataset.head())
+print(dataset.info())
+print(dataset.describe())
+print(dataset.isnull().any())
+dataset=dataset.drop("Unnamed: 32",axis=1)
+dataset['diagnosis'].replace({'M':1,'B':0},inplace=True)
+print(dataset.head(6))
+
+train_x,test_x,train_y,test_y = train_test_split(dataset.drop('diagnosis',axis=1), dataset['diagnosis'], test_size=0.20)
+print(train_x.shape,train_y.shape,test_x.shape,test_y.shape)
+
+#initialize the classifier
+rf_clf = RandomForestClassifier(n_estimators=100)
+dt_clf = DecisionTreeClassifier()
+# Train the classifiers on the training data
+rf_clf.fit(train_x, train_y)
+dt_clf.fit(train_x, train_y)
+# Make predictions on the test set
+rf_pred = rf_clf.predict(test_x)
+dt_pred = dt_clf.predict(test_x)
+# Print the accuracy, precision, recall, and f1-score
+print("Random Forest Classifier")
+print("Accuracy: {:.2f}%".format(accuracy_score(test_y, rf_pred) * 100))
+print("Precision: {:.2f}%".format(precision_score(test_y, rf_pred) * 100))
+print("Recall: {:.2f}%".format(recall_score(test_y, rf_pred) * 100))
+print("F1-Score: {:.2f}%".format(f1_score(test_y, rf_pred) * 100))
+print("\nDecision Tree Classifier")
+print("Accuracy: {:.2f}%".format(accuracy_score(test_y, dt_pred) * 100))
+print("Precision: {:.2f}%".format(precision_score(test_y, dt_pred) * 100))
+print("Recall: {:.2f}%".format(recall_score(test_y, dt_pred) * 100))
+print("F1-Score: {:.2f}%".format(f1_score(test_y, dt_pred) * 100))
